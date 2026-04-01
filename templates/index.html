@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartHydronity AI Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>SmartHydronity AI Dashboard</h1>
+        <p class="subtitle">Sistem Hidroponik Komunitas Berbasis IoT dan AI</p>
+
+        <div class="card form-card">
+            <h2>Input Data Sensor</h2>
+            <form method="POST">
+                <label>pH</label>
+                <input type="number" step="0.01" name="ph" required>
+
+                <label>EC</label>
+                <input type="number" step="0.01" name="ec" required>
+
+                <label>Suhu (°C)</label>
+                <input type="number" step="0.01" name="suhu" required>
+
+                <label>Kelembapan (%)</label>
+                <input type="number" step="0.01" name="kelembapan" required>
+
+                <label>Umur Tanaman (hari)</label>
+                <input type="number" name="umur_tanaman" required>
+
+                <button type="submit">Analisis AI</button>
+            </form>
+        </div>
+
+        {% if hasil %}
+        <div class="card result-card">
+            <h2>Hasil Analisis</h2>
+
+            <div class="status 
+                {% if hasil.status == 'AMAN' %}green
+                {% elif hasil.status == 'PERLU KOREKSI' %}yellow
+                {% elif hasil.status == 'KRITIS' %}red
+                {% else %}gray
+                {% endif %}">
+                Status: {{ hasil.status }}
+            </div>
+
+            {% if hasil.target_ec %}
+            <p><strong>Target EC:</strong> {{ hasil.target_ec.min }} - {{ hasil.target_ec.max }}</p>
+
+            <h3>Rekomendasi Dosis</h3>
+            <ul>
+                <li>Nutrisi: {{ hasil.rekomendasi.nutrisi_ml }} ml</li>
+                <li>Air Bersih: {{ hasil.rekomendasi.air_ml }} ml</li>
+                <li>pH Up: {{ hasil.rekomendasi.ph_up_ml }} ml</li>
+                <li>pH Down: {{ hasil.rekomendasi.ph_down_ml }} ml</li>
+            </ul>
+            {% endif %}
+
+            <h3>Aksi</h3>
+            <ul>
+                {% for item in hasil.aksi %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Catatan</h3>
+            <ul>
+                {% for item in hasil.catatan %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
